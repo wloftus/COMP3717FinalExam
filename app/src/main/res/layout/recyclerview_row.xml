@@ -12,12 +12,38 @@
         android:contentDescription="@string/user_picture"
         android:src="@drawable/ic_movie_primary_24dp" />
 
-    <TextView
-        android:id="@+id/movie_text"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:paddingStart="24dp"
-        android:paddingEnd="0dp"/>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/movie_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:paddingEnd="0dp"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/movie_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:paddingEnd="0dp"
+            android:textSize="15sp"
+            android:layout_below="@+id/movie_title" />
+
+        <TextView
+            android:id="@+id/movie_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:paddingEnd="0dp"
+            android:textSize="15sp"
+            android:layout_below="@id/movie_desc"
+            android:textStyle="italic" />
+    </RelativeLayout>
 
 </LinearLayout>

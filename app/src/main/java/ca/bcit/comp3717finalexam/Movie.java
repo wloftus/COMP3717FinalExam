@@ -1,38 +1,24 @@
 package ca.bcit.comp3717finalexam;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+/**
+ * A movie object. Contains the movie's title, the movie's description, and a link to the movie.
+ */
+@IgnoreExtraProperties
 public class Movie {
 
-    private String title;
-    private String description;
-    private String link;
+    public String title;
+    public String description;
+    public String link;
+
+    public Movie() {
+        // Default constructor required for calls to snapshot.getValue(Movie.class)
+    }
 
     public Movie(String title, String description, String link) {
         this.title = title;
         this.description = description;
-        this.link = link;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
         this.link = link;
     }
 }

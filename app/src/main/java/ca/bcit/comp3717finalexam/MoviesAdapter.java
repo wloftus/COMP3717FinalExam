@@ -34,9 +34,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Movie movie = mData.get(position);
-        String text = movie.getTitle() + " - " + movie.getDescription();
 
-        holder.myTextView.setText(text);
+        holder.title_text.setText(movie.title);
+        holder.desc_text.setText(movie.description);
+        holder.link_text.setText(movie.link);
     }
 
     // total number of rows
@@ -48,11 +49,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView myTextView;
+        TextView title_text;
+        TextView desc_text;
+        TextView link_text;
 
         ViewHolder(View itemView) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.movie_text);
+            title_text = itemView.findViewById(R.id.movie_title);
+            desc_text = itemView.findViewById(R.id.movie_desc);
+            link_text = itemView.findViewById(R.id.movie_link);
             itemView.setOnClickListener(this);
         }
 

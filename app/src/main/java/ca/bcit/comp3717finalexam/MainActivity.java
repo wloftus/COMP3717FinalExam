@@ -4,7 +4,13 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -25,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private MoviesAdapter adapter;
     private ArrayList<Movie> movies = new ArrayList<>();
     private RecyclerView recyclerView;
+    private DatabaseReference database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +40,23 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // data to populate the RecyclerView with
-        movies.add(new Movie("Finding Dory 1", "In this movie they find dory.", "link"));
-        movies.add(new Movie("Finding Dory 2", "In this movie they find dory again.", "link"));
-        movies.add(new Movie("Finding Dory 3", "In this movie they find dory again again.", "link"));
-        movies.add(new Movie("Finding Dory 4", "In this movie they find dory again again again.", "link"));
-        movies.add(new Movie("Finding Dory 5", "In this movie they find dory.", "link"));
+        database = FirebaseDatabase.getInstance().getReference();
+
+        // Loads the list with all Movies in the database.
+        database.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.child("movies").getChildren()) {
+                    Movie movie = child.getValue(Movie.class);
+                    movies.add(movie);
+                }
+                adapter = new MoviesAdapter(MainActivity.this, movies);
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
 
         // set up the RecyclerView
         recyclerView = findViewById(R.id.recyclerview);
@@ -50,18 +68,39 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createBuilder();
+                createAlertDialog();
             }
         });
     }
 
+    /**
+     * Adds the specified movie to the database.
+     *
+     * @param movie the movie to be added.
+     */
+    private void writeNewMovie(Movie movie) {
+        String key = database.child("movies").push().getKey();
+        database.child("movies").child(key).setValue(movie);
+    }
+
+    /**
+     * Adds the specified movie to the Recycler View list.
+     *
+     * @param movie the movie to be added.
+     */
     public void addToList(Movie movie) {
         movies.add(movie);
         recyclerView.setAdapter(adapter);
         adapter = new MoviesAdapter(MainActivity.this, movies);
     }
 
-    public void createBuilder() {
+    /**
+     * Builds the Alert Dialog that is triggered when the plus button is pressed.
+     * Contains two listeners:
+     *     - "ADD" button. When pressed, a movie is created in the database.
+     *     - "Cancel" button. When pressed, the dialog is exited.
+     */
+    public void createAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Add a Movie");
 
@@ -81,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 Movie movie = new Movie(movie_name.getText().toString(),
                         movie_desc.getText().toString(), movie_link.getText().toString());
 
+                writeNewMovie(movie);
                 addToList(movie);
             }
         });
